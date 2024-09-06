@@ -51,7 +51,7 @@ document.getElementById("dropdown").addEventListener("change", (event) => {
       warningMessage.textContent = 'Extensão está habilitada. a maldade da Gupy está sendo filtrada!😁';
       warningMessage.className = 'green';
     } else {
-      warningMessage.textContent = 'Extensão está desabilitada. a maldade da Gupy não está sendo filtrada!🙁';
+      warningMessage.textContent = 'Extensão está desabilitada. Gupy está dominando o mundo!😈';
       warningMessage.className = 'red';
     }
 });
@@ -80,8 +80,7 @@ function checkPage(){
                      
                         jobDetailsArray.forEach((jobDetail) => {
                             const url = decodeURIComponent(jobDetail.jobUrl)
-                            console.log('Job ID:', jobDetail.jobId);
-                            console.log('Apply Comment Url:',  url);
+                        
                             const match = url.match(/url=([^"&]+)/);
                             let cleanUrl;
 
