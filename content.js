@@ -107,6 +107,10 @@ async function fetchJobDetails(jobId) {
 }
 
 
+function verifySimpleApply(jobId){
+    return document.querySelector(`[data-job-id="${jobId}"] > div > ul`)?.innerText.toLowerCase().includes('simplificada')
+}
+
 async function checkPage() {
     console.log('Checking page...');
     isEnabled = localStorage.getItem('extensionEnabled') === 'true';
@@ -129,8 +133,12 @@ async function checkPage() {
                             // if we've seen
                             return Promise.resolve(null);
                         } 
+
+                        // never seen before and its not simple apply
+                        else if(verifySimpleApply(job.jobId)){
+                            return Promise.resolve(null);
+                        }
                         else {
-                            // never seen before
                             addJobId(job.jobId);
                             return fetchJobDetails(job.jobId);
                         }
@@ -138,8 +146,7 @@ async function checkPage() {
 
                     const jobDetailsArray = await Promise.all(jobDetailsPromises);
 
-                    console.log('JOB DETAILS ARRAY:', jobDetailsArray)
-
+        
                     jobDetailsArray.forEach((jobDetail) => {
                         if (jobDetail) {
                             const url = decodeURIComponent(jobDetail.jobUrl);
@@ -204,7 +211,7 @@ function updateCheckLoop() {
 
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    console.log('REQUEST', request);
+    
 
     if (request.action === "setEnabled") {
         isEnabled = request.isEnabled;
