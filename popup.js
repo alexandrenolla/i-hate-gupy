@@ -1,113 +1,64 @@
 let isEnabled = false;
-
+let jobCounter = 0;
 const isBrowserAPI = typeof browser !== 'undefined';
 const isChromeAPI = typeof chrome !== 'undefined' && typeof chrome.storage !== 'undefined';
 
 
-function fetchJobDetails(jobId) {
-    const url = `https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/${jobId}`;
 
-    return fetch(url)
-        .then(response => {
-            if (response.ok) {
-                return response.text(); // Return as text
-            } else {
-                throw new Error('Network response was not ok.');
-            }
-        })
-        .then(html => {
-            // Parse the HTML
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
 
-            // Extract the job URL (or other details if needed)
-            const applyUrlElement = doc.querySelector('#applyUrl');
-            let jobUrl = 'Not Found'
-            if(applyUrlElement){
-                const applyUrl = applyUrlElement ? applyUrlElement.innerHTML.trim()  : 'Apply URL not found.';
 
-                const match = applyUrl.match(/"(https:\/\/[^"]+)"/)
-                if (match) {
-                    jobUrl = match[1];
-                }
-            }
-         
+function updateUI() {
+    const warningMessage = document.getElementById("warning-message");
+    const dropdown = document.getElementById("dropdown");
 
-            return { jobId, jobUrl };
-        })
-        .catch(error => {
-            console.error(`There was a problem with fetching job details for jobId ${jobId}:`, error);
-            return { jobId, applyUrl: 'Error fetching apply URL' };
-        });
+    if (isEnabled) {
+        warningMessage.textContent = 'Extensão está habilitada. a maldade da Gupy está sendo filtrada!😁';
+        warningMessage.className = 'green';
+        dropdown.value = 'yes';
+    } else {
+        warningMessage.textContent = 'Extensão está desabilitada. Gupy está dominando o mundo!😈';
+        warningMessage.className = 'red';
+        dropdown.value = 'no';
+    }
 }
+
+chrome.storage.local.get('isEnabled', (result) => {
+    isEnabled = result.isEnabled || false;
+    updateUI();
+});
 
 document.getElementById("dropdown").addEventListener("change", (event) => {
     isEnabled = event.target.value === 'yes';
+    
+    // Update UI
+    updateUI();
 
+    // Save the state
+    chrome.storage.local.set({ isEnabled });
+    
 
-    const warningMessage = document.getElementById("warning-message");
-    if (isEnabled) {
-        checkPage()
-      warningMessage.textContent = 'Extensão está habilitada. a maldade da Gupy está sendo filtrada!😁';
-      warningMessage.className = 'green';
-    } else {
-      warningMessage.textContent = 'Extensão está desabilitada. Gupy está dominando o mundo!😈';
-      warningMessage.className = 'red';
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs[0].id) {
+      chrome.tabs.sendMessage(tabs[0].id, { action: "setEnabled", isEnabled }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error("Error sending message:", chrome.runtime.lastError.message);
+        } else {
+          console.log("Response from content script:", response);
+        }
+      });
     }
+  });
+
 });
 
 
 
+const filteredJobs = document.getElementById("filtered-jobs");
+const n = localStorage.getItem('jobCounter')
+console.log(n)
+filteredJobs.textContent = `Vagas Removidas: ${n || 0}`;
 
-function checkPage(){
-    const urlToCheck = 'https://www.linkedin.com/jobs/collections/';
-    const tabs = isBrowserAPI ? browser.tabs : chrome.tabs;
 
-    tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        if (tabs.length > 0) {
-            chrome.tabs.sendMessage(tabs[0].id, { action: "filterJobs" }, async (response) => {
-                if (chrome.runtime.lastError) {
-                    console.error('SendMessage Error:', chrome.runtime.lastError);
-                } else {
-                    if (response && response.jobList) {
-                        const jobDetailsPromises = response.jobList.map((job) => {
-                            return fetchJobDetails(job.jobId);
-                        });
-    
-                     
-                        const jobDetailsArray = await Promise.all(jobDetailsPromises);
-    
-                     
-                        jobDetailsArray.forEach((jobDetail) => {
-                            const url = decodeURIComponent(jobDetail.jobUrl)
-                        
-                            const match = url.match(/url=([^"&]+)/);
-                            let cleanUrl;
 
-                            if (match) {
-                                cleanUrl = decodeURIComponent(match[1]);
-                            }
-
-                            if(cleanUrl && cleanUrl.includes('gupy.io')){
-                                chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                                    chrome.tabs.sendMessage(tabs[0].id, { action: "deleteJob", jobId: jobDetail.jobId });
-                                });
-                            }
-
-                            
-                        
-                        });
-                    } else {
-                        console.log('No job list found in response.');
-                    }
-                }
-            });
-        } else {
-            console.error('No active tabs found');
-        }
-    }
-    )
-
-}
 
 

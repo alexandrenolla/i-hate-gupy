@@ -3,7 +3,7 @@
   "name": "I Hate Gupy",
   "version": "1.0",
   "description": "A browser extension to filter out annoying jobs from linkedin, especially Gupy.",
-  "permissions": ["activeTab", "scripting", "tabs"],
+  "permissions": ["activeTab", "scripting", "tabs", "storage"],
   "action": {
     "default_popup": "popup.html"
   },
