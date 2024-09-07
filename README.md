@@ -1,6 +1,8 @@
 # I hate Gupy Browser Extension
 
-**i-hate-gupy** é uma extensão de navegador de código aberto projetada para melhorar a experiência do usuário ao interagir com o site de empregos Gupy. Esta extensão ajuda a filtrar e remover postagens de trabalho indesejadas da plataforma Gupy presentes no LinkedIn, oferecendo uma experiência de busca por emprego menos estressante no LinkedIn.
+**i-hate-gupy** é uma extensão de navegador de código aberto projetada para melhorar a experiência do usuário ao interagir com o LinkedIn. 
+
+Esta extensão ajuda a filtrar e remover postagens de trabalho indesejadas da plataforma Gupy presentes no LinkedIn, oferecendo uma experiência de busca por emprego menos estressante no LinkedIn.
 
 ## Funcionalidades
 
