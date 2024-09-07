@@ -1,19 +1,22 @@
 console.log('Content script loaded');
-const CHECK_INTERVAL = 10000; // Interval set to 10 seconds
-let checkInterval = null; // To keep track of the interval
-let isEnabled = localStorage.getItem('extensionEnabled') === 'true'; // Get initial state from localStorage
+const CHECK_INTERVAL = 10000;
+let checkInterval = null; 
+let isEnabled = localStorage.getItem('extensionEnabled') === 'true';
 const isBrowserAPI = typeof browser !== 'undefined';
 const isChromeAPI = typeof chrome !== 'undefined' && typeof chrome.storage !== 'undefined';
 console.log('browser:', typeof browser);
 console.log('chrome:', typeof chrome);
 
 
-const processedJobIds = new Set();
-
-const MAX_JOB_IDS = 500; // Adjust this as needed
+const MAX_JOB_IDS = 500;
 
 function saveGupyJobIds(jobIds){
-    localStorage.setItem('jobIds', JSON.stringify(jobIds));
+    localStorage.setItem('gupyJobIds', JSON.stringify(jobIds));
+}
+
+function getJobIdsFromGupy() {
+    const storedIds = localStorage.getItem('gupyJobIds');
+    return storedIds ? JSON.parse(storedIds) : [];
 }
 
 function getJobIds() {
@@ -25,24 +28,47 @@ function saveJobIds(jobIds) {
     localStorage.setItem('jobIds', JSON.stringify(jobIds));
 }
 
-function addJobId(jobId) {
-    let jobIds = getJobIds();
+function addJobIdToGupy(jobId) {
+    let jobIds = getJobIdsFromGupy();
 
-    // Remove the oldest entry if the array size exceeds the limit
+  
     if (jobIds.length >= MAX_JOB_IDS) {
-        jobIds.shift(); // Remove the first item (FIFO)
+        jobIds.shift(); 
     }
 
     if (!jobIds.includes(jobId)) {
-        jobIds.push(jobId); // Add new job ID if it doesn't exist
+        jobIds.push(jobId);
+        saveGupyJobIds(jobIds);
+    }
+
+    updateGupyCounter()
+}
+
+function addJobId(jobId) {
+    let jobIds = getJobIds();
+
+  
+    if (jobIds.length >= MAX_JOB_IDS) {
+        jobIds.shift(); 
+    }
+
+    if (!jobIds.includes(jobId)) {
+        jobIds.push(jobId);
         saveJobIds(jobIds);
     }
 }
+
 
 function hasJobId(jobId) {
     const jobIds = getJobIds();
     return jobIds.includes(jobId);
 }
+
+function hasJobIdFromGupy(jobId) {
+    const jobIdsFromGupy = getJobIdsFromGupy();
+    return jobIdsFromGupy.includes(jobId);
+}
+
 
 
 async function fetchJobDetails(jobId) {
@@ -51,17 +77,16 @@ async function fetchJobDetails(jobId) {
     return fetch(url)
         .then(response => {
             if (response.ok) {
-                return response.text(); // Return as text
+                return response.text();
             } else {
                 throw new Error('Network response was not ok.');
             }
         })
         .then(html => {
-            // Parse the HTML
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
 
-            // Extract the job URL (or other details if needed)
+
             const applyUrlElement = doc.querySelector('#applyUrl');
             let jobUrl = 'Not Found'
             if(applyUrlElement){
@@ -73,7 +98,6 @@ async function fetchJobDetails(jobId) {
                 }
             }
          
-
             return { jobId, jobUrl };
         })
         .catch(error => {
@@ -82,34 +106,32 @@ async function fetchJobDetails(jobId) {
         });
 }
 
-// Function to check the page
+
 async function checkPage() {
     console.log('Checking page...');
-
     isEnabled = localStorage.getItem('extensionEnabled') === 'true';
 
     if (isEnabled) {
         const urlToCheck = 'https://www.linkedin.com/jobs/collections/';
-        
-    
-        
             const currentUrl = window.location.href;
             if (currentUrl && currentUrl.includes(urlToCheck)) {
                 const jobList = [...document.querySelectorAll('.jobs-search-results-list > ul > li > div > div')].map((job) => ({ jobId: job.getAttribute('data-job-id') }));
-
-
-               
                 
-
                 if (jobList.length > 0) {
               
                     const jobDetailsPromises = jobList.map((job) => {
-                        if (hasJobId(job.jobId)) {
-                        
+                        if(hasJobIdFromGupy(job.jobId)){
+                            // if we've already seen and it's gupy
+                            deleteJobPost(job.jobId)
                             return Promise.resolve(null);
-                        } else {
+                        }
+                        else if (hasJobId(job.jobId)) {
+                            // if we've seen
+                            return Promise.resolve(null);
+                        } 
+                        else {
+                            // never seen before
                             addJobId(job.jobId);
-         
                             return fetchJobDetails(job.jobId);
                         }
                     });
@@ -130,6 +152,7 @@ async function checkPage() {
 
                             if (cleanUrl && cleanUrl.includes('gupy.io')) {
                                 deleteJobPost(jobDetail.jobId);
+                                addJobIdToGupy(jobDetail.jobId);
                             }
                         }
                     });
@@ -158,31 +181,35 @@ function deleteJobPost(jobId){
     
 }
 
-// Function to start or stop the checkPage loop
+function updateGupyCounter(){
+    const gupyCounterLength = getJobIdsFromGupy().length;
+    localStorage.setItem('jobCounter', gupyCounterLength.toString())
+}
+
 function updateCheckLoop() {
     if (isEnabled) {
         console.log('Extension is enabled. Starting checkPage loop.');
         if (!checkInterval) {
-            checkPage(); // Run immediately once
-            checkInterval = setInterval(checkPage, CHECK_INTERVAL); // Set the loop to run every 10 seconds
+            checkPage();
+            checkInterval = setInterval(checkPage, CHECK_INTERVAL); 
         }
     } else {
         console.log('Extension is disabled. Stopping checkPage loop.');
         if (checkInterval) {
-            clearInterval(checkInterval); // Stop the loop
+            clearInterval(checkInterval); 
             checkInterval = null;
         }
     }
 }
 
-// Listen for messages from the popup or background script
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     console.log('REQUEST', request);
 
     if (request.action === "setEnabled") {
         isEnabled = request.isEnabled;
         localStorage.setItem('extensionEnabled', isEnabled);
-        updateCheckLoop(); // Start or stop the loop based on the new state
+        updateCheckLoop();
         sendResponse({ isEnabled });
     }
 
@@ -193,10 +220,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         sendResponse({ jobList: jobList.length ? jobList : 'No job list found' });
     }
 
+   
+    if (request.action === "getJobCounter") {
+     
+        const gupyCounterLength = getJobIdsFromGupy().length;
+        
+        sendResponse({ filteredNum: gupyCounterLength});
+    }
+
     
 
-    return true; // Keeps the message channel open for async operations
+    return true; 
 });
 
-// Start the loop initially based on stored state
+
 updateCheckLoop();

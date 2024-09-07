@@ -20,6 +20,26 @@ function updateUI() {
         warningMessage.className = 'red';
         dropdown.value = 'no';
     }
+
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (tabs[0].id) {
+          chrome.tabs.sendMessage(tabs[0].id, { action: "getJobCounter" }, (response) => {
+            if (chrome.runtime.lastError) {
+              console.error("Error sending message:", chrome.runtime.lastError.message);
+            } else {
+              console.log("Response from content script:", response);
+
+              const filteredJobs = document.getElementById("filtered-jobs");
+              const n = response.filteredNum
+           
+              filteredJobs.textContent = `Vagas Removidas: ${n || 0}`;
+
+            }
+          });
+        }
+      });
+
 }
 
 chrome.storage.local.get('isEnabled', (result) => {
@@ -53,10 +73,6 @@ document.getElementById("dropdown").addEventListener("change", (event) => {
 
 
 
-const filteredJobs = document.getElementById("filtered-jobs");
-const n = localStorage.getItem('jobCounter')
-console.log(n)
-filteredJobs.textContent = `Vagas Removidas: ${n || 0}`;
 
 
 
