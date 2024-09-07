@@ -12,8 +12,11 @@
         "matches": ["<all_urls>"], 
         "js": ["content.js"]
     }
-]
-
-  
+],
+"icons": {
+    "16": "./assets/anti-gupy.png",
+    "48": "./assets/anti-gupy.png",
+    "128": "./assets/anti-gupy.png"
+  }
   
 }

@@ -1,76 +1,79 @@
-
 body {
-    width: 250px; 
-    font-family: Arial, sans-serif;
-    padding: 15px;
-    background-color: #f9f9f9;
-    color: #333;
-  }
-  
-  h3 {
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
-  
-  p {
-    font-size: 14px;
-    margin-bottom: 15px;
-  }
-  
-  #dropdown-container {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-  }
-  
-  #dropdown {
-    margin-left: 2px;
-    padding: 5px;
-    font-size: 14px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
-  
-  #selector {
-    width: 100%;
-    padding: 5px;
-    font-size: 14px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin-bottom: 10px;
-  }
-  
-  button {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
+  width: 250px; 
+  font-family: 'Roboto', sans-serif;
+  padding: 15px;
+  background-color: #f9f9f9;
+  color: #333;
 
-  #warning-message {
-    margin-top: 10px;
-    padding: 10px;
-    font-size: 14px;
-    border-radius: 4px;
-  }
-  
-  #warning-message.green {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-  }
-  
-  #warning-message.red {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-  }
+  margin: 0;
+}
+
+
+
+header img {
+  border-radius: 10px;
+}
+
+h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: rgb(0, 61, 151);
+}
+
+p {
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+#toggle-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+#dropdown {
+  margin-left: 10px;
+  padding: 5px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  background-color: rgb(0, 61, 151);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+#warning-message {
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+#warning-message.green {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+#warning-message.red {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}

@@ -26,7 +26,7 @@ function updateUI() {
         if (tabs[0].id) {
           chrome.tabs.sendMessage(tabs[0].id, { action: "getJobCounter" }, (response) => {
             if (chrome.runtime.lastError) {
-              console.error("Error sending message:", chrome.runtime.lastError.message);
+              //console.error("Error sending message:", chrome.runtime.lastError.message);
             } else {
               console.log("Response from content script:", response);
 
@@ -61,7 +61,7 @@ document.getElementById("dropdown").addEventListener("change", (event) => {
     if (tabs[0].id) {
       chrome.tabs.sendMessage(tabs[0].id, { action: "setEnabled", isEnabled }, (response) => {
         if (chrome.runtime.lastError) {
-          console.error("Error sending message:", chrome.runtime.lastError.message);
+         // console.error("Error sending message:", chrome.runtime.lastError.message);
         } else {
           console.log("Response from content script:", response);
         }

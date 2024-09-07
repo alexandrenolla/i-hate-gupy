@@ -4,8 +4,7 @@ let checkInterval = null;
 let isEnabled = localStorage.getItem('extensionEnabled') === 'true';
 const isBrowserAPI = typeof browser !== 'undefined';
 const isChromeAPI = typeof chrome !== 'undefined' && typeof chrome.storage !== 'undefined';
-console.log('browser:', typeof browser);
-console.log('chrome:', typeof chrome);
+
 
 
 const MAX_JOB_IDS = 500;
@@ -112,7 +111,7 @@ function verifySimpleApply(jobId){
 }
 
 async function checkPage() {
-    console.log('Checking page...');
+
     isEnabled = localStorage.getItem('extensionEnabled') === 'true';
 
     if (isEnabled) {
@@ -166,8 +165,6 @@ async function checkPage() {
                 } else {
                     console.log('No job list found in response.');
                 }
-            } else {
-                console.error('No active tabs found or URL does not match.');
             }
        
     }
@@ -195,13 +192,13 @@ function updateGupyCounter(){
 
 function updateCheckLoop() {
     if (isEnabled) {
-        console.log('Extension is enabled. Starting checkPage loop.');
+    
         if (!checkInterval) {
             checkPage();
             checkInterval = setInterval(checkPage, CHECK_INTERVAL); 
         }
     } else {
-        console.log('Extension is disabled. Stopping checkPage loop.');
+      
         if (checkInterval) {
             clearInterval(checkInterval); 
             checkInterval = null;
