@@ -1,5 +1,5 @@
 console.log('Content script loaded');
-const CHECK_INTERVAL = 10000;
+const CHECK_INTERVAL = 5000;
 let checkInterval = null; 
 let isEnabled = localStorage.getItem('extensionEnabled') === 'true';
 const isBrowserAPI = typeof browser !== 'undefined';
