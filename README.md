@@ -8,7 +8,7 @@ Esta extensão ajuda a filtrar e remover postagens de trabalho indesejadas da pl
 
 - **Filtragem de Vagas**: Remove postagens de trabalho indesejadas com base em IDs de trabalho específicos.
 - **Interface Simples**: Permite habilitar ou desabilitar a extensão com um clique e exibe o número de vagas removidas.
-- **Armazenamento Local**: Salva IDs de trabalho para evitar processamento duplicado.
+- **Armazenamento Local**: Salva IDs de trabalho para evitar processamento duplicado. (Evita erros como 429 ao buscar algumas vagas).
 
 ## Requisitos
 
