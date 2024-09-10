@@ -19,7 +19,7 @@ Esta extensão ajuda a filtrar e remover postagens de trabalho indesejadas da pl
 ## Como instalar?
 
 ### Para Google Chrome:
-1. Baixe o arquivo ZIP da extensão a partir do repositório ou site.
+1. Baixe o arquivo ZIP da extensão a partir do repositório -> <a href="https://github.com/L-Goncalves/i-hate-gupy/archive/refs/heads/main.zip">Clicando aqui </a>
 2. Extraia o conteúdo do arquivo ZIP para uma pasta local.
 3. Abra o Google Chrome e vá para `chrome://extensions/`.
 4. Ative o **Modo do Desenvolvedor** no canto superior direito da página.
@@ -28,7 +28,7 @@ Esta extensão ajuda a filtrar e remover postagens de trabalho indesejadas da pl
 
 
 ### Para Microsoft Edge:
-1. Baixe o arquivo ZIP da extensão a partir do repositório ou site.
+1. Baixe o arquivo ZIP da extensão a partir do repositório -> <a href="https://github.com/L-Goncalves/i-hate-gupy/archive/refs/heads/main.zip">Clicando aqui </a>
 2. Extraia o conteúdo do arquivo ZIP para uma pasta local.
 3. Abra o Microsoft Edge e vá para `edge://extensions/`.
 4. Ative o **Modo de Desenvolvedor** no canto inferior esquerdo da página.
